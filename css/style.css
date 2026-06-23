@@ -184,6 +184,35 @@ body {
   outline-offset: 2px;
 }
 
+/* パンくずリスト */
+.breadcrumbs {
+  padding: 12px 0 14px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  color: var(--mist-dim);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+.breadcrumbs a {
+  color: var(--mist-dim);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.breadcrumbs a:hover, .breadcrumbs a:focus-visible {
+  color: var(--comet);
+}
+.breadcrumbs .bc-current {
+  color: var(--starwhite);
+}
+.breadcrumbs .bc-sep {
+  color: var(--mist-dim);
+  margin: 0 8px;
+  opacity: 0.6;
+}
+
 /* ---------- レイアウト本体 ---------- */
 .layout {
   max-width: var(--maxw);
@@ -296,32 +325,15 @@ body {
 .intro-card p { color: var(--mist); margin: 0 0 12px; }
 .intro-card p:last-child { margin-bottom: 0; }
 
-.member-strip {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+.member-photo-row {
+  display: flex;
   gap: 14px;
   margin-bottom: 36px;
+  flex-wrap: wrap;
 }
-.member-chip {
-  background: var(--indigo-2);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 14px;
-  text-align: center;
-  text-decoration: none;
-  color: var(--mist);
-  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-  display: block;
-}
-.member-chip:hover, .member-chip:focus-visible {
-  transform: translateY(-3px);
-  border-color: var(--nebula-dim);
-  box-shadow: var(--glow-nebula);
-}
-.member-photo {
+.member-photo-only {
   width: 64px; height: 64px;
   border-radius: 50%;
-  margin: 0 auto 10px;
   background: radial-gradient(circle at 35% 30%, var(--nebula), var(--indigo) 70%);
   border: 1px solid var(--line);
   display: flex;
@@ -332,25 +344,44 @@ body {
   font-size: 1.1rem;
   overflow: hidden;
 }
-.member-photo img, .member-detail-photo img {
+.member-photo-only img {
   width: 100%; height: 100%;
   object-fit: cover;
   border-radius: 50%;
 }
-.member-chip .m-name {
-  display: block;
-  font-size: 0.86rem;
-  color: var(--starwhite);
-  font-family: var(--font-display);
+
+/* メンバーの仲(エピソード)カード */
+.episode-card {
+  display: flex;
+  gap: 20px;
+  background: linear-gradient(160deg, var(--indigo), rgba(20,24,46,0.4));
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 22px;
 }
-.member-chip .m-role {
-  display: block;
+.episode-photo {
+  flex: none;
+  width: 140px;
+  height: 140px;
+  border-radius: var(--radius);
+  background: radial-gradient(circle at 30% 25%, var(--nebula) 0%, var(--indigo) 60%, var(--void) 100%);
+  border: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-family: var(--font-mono);
-  font-size: 0.6rem;
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
   color: var(--mist-dim);
-  margin-top: 2px;
-  letter-spacing: 0.06em;
+  overflow: hidden;
 }
+.episode-photo img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+.episode-text { flex: 1; min-width: 0; }
+.episode-text p { margin: 0 0 10px; font-size: 0.88rem; color: var(--mist); }
+.episode-text p:last-child { margin-bottom: 0; }
 
 /* ---------- 検索バー ---------- */
 .catalog-section {
@@ -535,6 +566,11 @@ body {
   font-size: 1.4rem;
   overflow: hidden;
 }
+.member-detail-photo img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
 .member-detail-card h3 {
   font-family: var(--font-display);
   color: var(--starwhite);
@@ -563,10 +599,19 @@ body {
   margin-top: 22px;
 }
 .album-card {
+  display: block;
   background: var(--indigo-2);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   overflow: hidden;
+  text-decoration: none;
+  color: var(--mist);
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+.album-card:hover, .album-card:focus-visible {
+  transform: translateY(-3px);
+  border-color: var(--comet-dim);
+  box-shadow: var(--glow-comet);
 }
 .album-art {
   width: 100%;
@@ -600,8 +645,8 @@ body {
   margin: 0;
 }
 
-/* ---------- ライブ定番曲ページ ---------- */
-.live-list {
+/* ---------- ライブ定番曲ページ / アルバム内トラックリスト ---------- */
+.live-list, .track-list {
   list-style: none;
   margin: 22px 0 0;
   padding: 0;
@@ -609,7 +654,7 @@ body {
   flex-direction: column;
   gap: 10px;
 }
-.live-list a {
+.live-list a, .track-list a {
   display: flex;
   align-items: center;
   gap: 16px;
@@ -621,24 +666,25 @@ body {
   color: var(--mist);
   transition: border-color 0.2s, transform 0.2s;
 }
-.live-list a:hover, .live-list a:focus-visible {
+.live-list a:hover, .live-list a:focus-visible,
+.track-list a:hover, .track-list a:focus-visible {
   border-color: var(--comet-dim);
   transform: translateX(3px);
 }
-.live-list .rank {
+.live-list .rank, .track-list .rank {
   font-family: var(--font-mono);
   color: var(--comet);
   font-size: 0.78rem;
   width: 28px;
   flex: none;
 }
-.live-list .ttl {
+.live-list .ttl, .track-list .ttl {
   font-family: var(--font-display);
   color: var(--starwhite);
   font-size: 1rem;
   flex: 1;
 }
-.live-list .arrow { color: var(--mist-dim); }
+.live-list .arrow, .track-list .arrow { color: var(--mist-dim); }
 
 /* ---------- 曲詳細ページ ---------- */
 .song-detail-head {
@@ -744,12 +790,13 @@ body {
 @media (max-width: 880px) {
   .layout { grid-template-columns: 1fr; }
   .log-panel { position: static; }
-  .member-strip { grid-template-columns: repeat(2, 1fr); }
   .member-detail-grid, .album-grid { grid-template-columns: 1fr; }
   .song-grid { grid-template-columns: 1fr; }
   .info-table { grid-template-columns: 1fr; }
   .header-inner { padding: 14px 16px 0; }
   .orbit-nav { overflow-x: auto; }
+  .episode-card { flex-direction: column; }
+  .episode-photo { width: 100%; height: 160px; }
 }
 
 [hidden] { display: none !important; }

@@ -18,6 +18,20 @@ const searchInput = document.getElementById("searchInput");
 const tabNav = document.getElementById("tabNav");
 const navIndicator = document.getElementById("navIndicator");
 const tabButtons = [...tabNav.querySelectorAll(".tab-btn")];
+const breadcrumbsEl = document.getElementById("breadcrumbs");
+
+const TAB_LABELS = { home: "ホーム", members: "メンバー", album: "アルバム", live: "ライブ定番曲" };
+
+function renderBreadcrumbs(trail) {
+  // trail: 配列 [{label, href}] 最後の要素は現在地(リンクなし)
+  breadcrumbsEl.innerHTML = trail.map((c, i) => {
+    const isLast = i === trail.length - 1;
+    const sep = i === 0 ? "" : `<span class="bc-sep" aria-hidden="true">›</span>`;
+    return sep + (isLast || !c.href
+      ? `<span class="bc-current">${c.label}</span>`
+      : `<a href="${c.href}">${c.label}</a>`);
+  }).join("");
+}
 
 /* ---------------------------------------------------------
    サイドバー: 観測ログ(最近のアップロード 最大10件)
@@ -125,15 +139,11 @@ function viewHome() {
       ${BAND_INTRO.split("\n").map(line => `<p>${line}</p>`).join("")}
     </div>
 
-    <span class="section-eyebrow">MEMBERS</span>
-    <h2 class="section-title" style="font-size:1.2rem;">メンバー</h2>
-    <div class="member-strip">
+    <div class="member-photo-row">
       ${MEMBERS.map(m => `
-        <a class="member-chip" href="#members">
-          <span class="member-photo">${m.photo ? `<img src="${m.photo}" alt="${m.name}">` : m.initial}</span>
-          <span class="m-name">${m.name}</span>
-          <span class="m-role">${m.role}</span>
-        </a>
+        <span class="member-photo-only" title="${m.name}">
+          ${m.photo ? `<img src="${m.photo}" alt="${m.name}">` : m.initial}
+        </span>
       `).join("")}
     </div>
   `;
@@ -156,7 +166,28 @@ function viewMembers() {
         </div>
       `).join("")}
     </div>
+
+    <span class="section-eyebrow" style="margin-top:30px;display:block;">MEMBER EPISODE</span>
+    <h2 class="section-title" style="font-size:1.2rem;">メンバーの仲</h2>
+    <div class="episode-card">
+      <div class="episode-photo" aria-hidden="true">
+        ${MEMBER_EPISODE.photo ? `<img src="${MEMBER_EPISODE.photo}" alt="メンバーの集合写真">` : "PHOTO"}
+      </div>
+      <div class="episode-text">
+        ${MEMBER_EPISODE.message.split("\n").map(l => `<p>${l}</p>`).join("")}
+      </div>
+    </div>
   `;
+}
+
+function findAlbumById(id) {
+  return ALBUMS.find(a => a.id === id);
+}
+function findAlbumByTitle(title) {
+  return ALBUMS.find(a => a.title === title);
+}
+function songsOfAlbum(album) {
+  return SONGS.filter(s => s.album === album.title).sort((a, b) => a.catNo.localeCompare(b.catNo));
 }
 
 function viewAlbum() {
@@ -165,16 +196,53 @@ function viewAlbum() {
     <h2 class="section-title">アルバム</h2>
     <div class="album-grid">
       ${ALBUMS.map(a => `
-        <div class="album-card">
+        <a class="album-card" href="#album-${a.id}">
           <div class="album-art" ${a.photo ? `style="background-image:url('${a.photo}');background-size:cover;background-position:center;"` : ""} aria-hidden="true"></div>
           <div class="album-body">
             <span class="a-year">${a.year}</span>
             <h3>${a.title}</h3>
             <p>${a.desc}</p>
           </div>
-        </div>
+        </a>
       `).join("")}
     </div>
+  `;
+}
+
+function viewAlbumDetail(id) {
+  const album = findAlbumById(id);
+  if (!album) {
+    return `
+      <a class="back-link" href="#" onclick="history.back();return false;">‹ 戻る</a>
+      <div class="empty-state">このアルバムの観測記録は見つかりませんでした。</div>
+    `;
+  }
+  const tracks = songsOfAlbum(album);
+
+  return `
+    <a class="back-link" href="#album">‹ アルバム一覧に戻る</a>
+    <div class="song-detail-head">
+      <span class="cat-no">ALBUM · ${album.year}</span>
+      <h1>${album.title}</h1>
+    </div>
+    <div class="album-art" style="max-width:220px;margin-bottom:18px;${album.photo ? `background-image:url('${album.photo}');background-size:cover;background-position:center;` : ""}" aria-hidden="true"></div>
+    <p style="color:var(--mist);margin-bottom:22px;">${album.desc}</p>
+
+    <span class="section-eyebrow">TRACKLIST</span>
+    <h2 class="section-title" style="font-size:1.05rem;">収録曲</h2>
+    ${tracks.length ? `
+      <ol class="track-list">
+        ${tracks.map((s, i) => `
+          <li>
+            <a href="#song-${s.id}">
+              <span class="rank">${String(i + 1).padStart(2, "0")}</span>
+              <span class="ttl">${s.title}</span>
+              <span class="arrow">→</span>
+            </a>
+          </li>
+        `).join("")}
+      </ol>
+    ` : `<div class="empty-state">このアルバムにはまだ曲が登録されていません。</div>`}
   `;
 }
 
@@ -213,8 +281,12 @@ function viewSongDetail(id) {
          動画未設定 — data.js の youtubeId に動画IDを設定すると、ここにYouTube動画が表示されます
        </div>`;
 
+  const parentAlbum = findAlbumByTitle(song.album);
+  const backHref = parentAlbum ? `#album-${parentAlbum.id}` : "#album";
+  const backLabel = parentAlbum ? `‹ ${parentAlbum.title} に戻る` : "‹ 一覧に戻る";
+
   return `
-    <a class="back-link" href="#" onclick="history.back();return false;">‹ 一覧に戻る</a>
+    <a class="back-link" href="${backHref}">${backLabel}</a>
     <div class="song-detail-head">
       <span class="cat-no">${song.catNo}${song.liveStandard ? " · LIVE定番曲" : ""}</span>
       <h1>${song.title}</h1>
@@ -267,16 +339,55 @@ function router() {
   const hash = location.hash.replace("#", "") || "home";
   window.scrollTo(0, 0);
 
+  // 曲詳細
   if (hash.startsWith("song-")) {
-    viewRoot.innerHTML = viewSongDetail(hash.slice(5));
+    const songId = hash.slice(5);
+    const song = SONGS.find(s => s.id === songId);
+    viewRoot.innerHTML = viewSongDetail(songId);
     updateIndicator(null);
+    const album = song ? findAlbumByTitle(song.album) : null;
+    if (album) {
+      renderBreadcrumbs([
+        { label: "ホーム", href: "#" },
+        { label: "アルバム", href: "#album" },
+        { label: album.title, href: `#album-${album.id}` },
+        { label: song ? song.title : "曲が見つかりません" }
+      ]);
+    } else {
+      renderBreadcrumbs([
+        { label: "ホーム", href: "#" },
+        { label: "曲一覧", href: "#" },
+        { label: song ? song.title : "曲が見つかりません" }
+      ]);
+    }
     return;
   }
 
+  // アルバム詳細
+  if (hash.startsWith("album-")) {
+    const albumId = hash.slice(6);
+    const album = findAlbumById(albumId);
+    viewRoot.innerHTML = viewAlbumDetail(albumId);
+    updateIndicator("album");
+    renderBreadcrumbs([
+      { label: "ホーム", href: "#" },
+      { label: "アルバム", href: "#album" },
+      { label: album ? album.title : "アルバムが見つかりません" }
+    ]);
+    return;
+  }
+
+  // 通常タブ(ホーム/メンバー/アルバム/ライブ定番曲)
   const renderer = ROUTE_RENDERERS[hash] || viewHome;
   const routeKey = ROUTE_RENDERERS[hash] ? hash : "home";
   viewRoot.innerHTML = renderer();
   updateIndicator(routeKey);
+
+  if (routeKey === "home") {
+    renderBreadcrumbs([{ label: "ホーム" }]);
+  } else {
+    renderBreadcrumbs([{ label: "ホーム", href: "#" }, { label: TAB_LABELS[routeKey] }]);
+  }
 }
 
 tabButtons.forEach(btn => {
