@@ -102,80 +102,36 @@ const ALBUMS = [
 ];
 
 /*
-  メンバー間の仲の良さを伝えるエピソード欄(メンバータブ用)
-  - message: フリーテキスト(改行は \n で区切ると段落になります)
-  - photo: 集合写真などを使う場合のパス(任意。空ならプレースホルダー表示)
+  ホームタブ: バンド説明の直下に表示する1枚の画像
+  例: const HOME_PHOTO = "images/home-photo.jpg";
 */
-const MEMBER_EPISODE = {
-  message: `
-4人は中学・高校時代からの幼なじみで、デビューから20年以上が経った今も当時とほぼ同じメンバーで活動を続けている。
-インタビューでは、お互いを下の名前や呼び名で呼び合う様子や、ライブ前に楽屋で他愛のない話で盛り上がる様子がよく語られる。
-ステージ上での息の合った掛け合いも、長年の積み重ねがあるからこそのもの。
-※本文は紹介用のサンプルです。実際のエピソードや写真に置き換えてご利用ください。
-`.trim(),
-  photo: ""
-};
+const HOME_PHOTO = "";
 
 /*
-  曲データ
-  - id: 一意のID(URLの #song-xxx に使われる)
-  - catNo: カタログ番号(表示用)
-  - title / subtitle: 曲名 / サブタイトル
-  - album, lyricist, composer, releaseDate: 基本情報
-  - youtubeId: YouTubeの動画ID(11文字)。サンプルのため空にしています。
-  - bullets: 箇条書きの説明
-  - liveStandard: true の場合、ライブ定番曲一覧に表示される
-  - date: 並び替え用の日付(YYYY-MM-DD) — 新しい順に「最近のアップロード」に出ます
+  メンバータブ: 各メンバー紹介の上に表示する「4人の集合写真」(1枚のみ)
+  例: const MEMBERS_GROUP_PHOTO = "images/members/group.jpg";
 */
-const SONGS = [
-  { id: "tentai-kansoku", catNo: "No.001", title: "天体観測", subtitle: "見上げた夜空に、君を見つける歌", album: "jupiter", lyricist: "藤原基央", composer: "藤原基央", releaseDate: "2001-11", youtubeId: "", liveStandard: true, date: "2026-06-18",
-    bullets: ["バンドの代表曲のひとつで、ライブでは合唱が起こる定番曲。", "望遠鏡で星を観測する行為と、大切な人を想う気持ちを重ねた歌詞が特徴。", "イントロのギターリフから始まる構成は、多くのカバーでも引用される。"] },
-  { id: "k", catNo: "No.002", title: "K", subtitle: "—", album: "シングル", lyricist: "藤原基央", composer: "藤原基央", releaseDate: "2003-09", youtubeId: "", liveStandard: true, date: "2026-06-15",
-    bullets: ["疾走感のあるギターロックで、ライブの中盤を盛り上げる定番曲。", "シンプルな構成ながら、サビでの一体感が魅力。"] },
-  { id: "supernova", catNo: "No.003", title: "supernova", subtitle: "—", album: "ユグドラシル", lyricist: "藤原基央", composer: "藤原基央", releaseDate: "2004-09", youtubeId: "", liveStandard: true, date: "2026-06-10",
-    bullets: ["超新星(supernova)をテーマにした、爆発的なエネルギーを感じさせる一曲。", "間奏のギターソロが印象的で、ライブでは大きな見せ場になる。"] },
-  { id: "glass-no-blues", catNo: "No.004", title: "ガラスのブルース", subtitle: "—", album: "orbital period", lyricist: "藤原基央", composer: "藤原基央", releaseDate: "2007-03", youtubeId: "", liveStandard: true, date: "2026-06-08",
-    bullets: ["割れやすく、それでも光を通すガラスを人の心に重ねた歌詞が特徴。", "テンポの良いロックサウンドで、ライブでは手拍子が起こる。"] },
-  { id: "lostman", catNo: "No.005", title: "ロストマン", subtitle: "—", album: "orbital period", lyricist: "藤原基央", composer: "藤原基央", releaseDate: "2007-03", youtubeId: "", liveStandard: true, date: "2026-06-05",
-    bullets: ["道に迷う者(ロストマン)を肯定するような、力強いメッセージ性のある楽曲。", "ライブの終盤に演奏されることが多い定番曲。"] },
-  { id: "mayday", catNo: "No.006", title: "メーデー", subtitle: "—", album: "COSMONAUT", lyricist: "藤原基央", composer: "藤原基央", releaseDate: "2009-03", youtubeId: "", liveStandard: true, date: "2026-06-02",
-    bullets: ["遭難信号「メーデー」をモチーフにした、緊迫感のあるロックチューン。", "ライブでは照明と連動した演出が映える一曲。"] },
-  { id: "acacia", catNo: "No.007", title: "アカシア", subtitle: "—", album: "COSMONAUT", lyricist: "藤原基央", composer: "藤原基央", releaseDate: "2009-03", youtubeId: "", liveStandard: true, date: "2026-05-28",
-    bullets: ["静かな導入から徐々に盛り上がっていく、ドラマチックな構成が特徴。", "歌詞に登場する木「アカシア」が、別れと再生の象徴として描かれる。"] },
-  { id: "hello-world", catNo: "No.008", title: "Hello,world!", subtitle: "—", album: "RAY", lyricist: "藤原基央", composer: "藤原基央", releaseDate: "2014-06", youtubeId: "", liveStandard: true, date: "2026-05-20",
-    bullets: ["プログラミングの入門でおなじみの一節をタイトルに据えた一曲。", "世界に向けた挨拶のような、開放的なサビが印象的。"] },
-  { id: "hananona", catNo: "No.009", title: "花の名", subtitle: "—", album: "aurora arc", lyricist: "藤原基央", composer: "藤原基央", releaseDate: "2018-10", youtubeId: "", liveStandard: true, date: "2026-05-12",
-    bullets: ["名前のない花に名前をつけるように、ありふれた日常を見つめ直す歌詞。", "落ち着いたミディアムテンポで、しっかりと聴かせる一曲。"] },
-  { id: "ray-song", catNo: "No.010", title: "ray", subtitle: "—", album: "RAY", lyricist: "藤原基央", composer: "藤原基央", releaseDate: "2014-01", youtubeId: "", liveStandard: true, date: "2026-05-01",
-    bullets: ["一筋の光(ray)を頼りに前へ進むことを歌った、応援歌的な一曲。", "アルバム表題曲として、バンドの転換期を象徴する楽曲。"] },
-  { id: "fighter", catNo: "No.011", title: "ファイター", subtitle: "—", album: "シングル", lyricist: "藤原基央", composer: "藤原基央", releaseDate: "2015-09", youtubeId: "", liveStandard: false, date: "2026-04-22",
-    bullets: ["戦う者(ファイター)に向けた、力強いエールのような楽曲。"] },
-  { id: "st-elmo", catNo: "No.012", title: "セントエルモの灯火", subtitle: "—", album: "シングル", lyricist: "藤原基央", composer: "藤原基央", releaseDate: "2018-01", youtubeId: "", liveStandard: false, date: "2026-04-10",
-    bullets: ["航海中に見える発光現象をモチーフにした、希望を歌う楽曲。"] },
-  { id: "karma", catNo: "No.013", title: "カルマ", subtitle: "—", album: "orbital period", lyricist: "藤原基央", composer: "藤原基央", releaseDate: "2007-03", youtubeId: "", liveStandard: false, date: "2026-03-30",
-    bullets: ["行いが巡るという「カルマ」の概念を題材にした、メッセージ性の強い楽曲。"] },
-  { id: "butterfly", catNo: "No.014", title: "BUTTERFLY", subtitle: "—", album: "RAY", lyricist: "藤原基央", composer: "藤原基央", releaseDate: "2014-01", youtubeId: "", liveStandard: false, date: "2026-03-18",
-    bullets: ["蝶(butterfly)の変化と再生を、人の成長に重ねた一曲。"] },
-  { id: "answer", catNo: "No.015", title: "アンサー", subtitle: "—", album: "シングル", lyricist: "藤原基央", composer: "藤原基央", releaseDate: "2012-05", youtubeId: "", liveStandard: false, date: "2026-02-25",
-    bullets: ["問いに対する自分なりの「答え」を探していく内容の楽曲。"] },
-  { id: "stage-of-the-ground", catNo: "No.016", title: "ステージオブザグラウンド", subtitle: "—", album: "シングル", lyricist: "藤原基央", composer: "藤原基央", releaseDate: "2010-05", youtubeId: "", liveStandard: false, date: "2026-02-14",
-    bullets: ["大地(グラウンド)を舞台に見立てた、スケールの大きい楽曲。"] },
-  { id: "tampopo", catNo: "No.017", title: "たんぽぽ", subtitle: "—", album: "THE LIVING DEAD", lyricist: "藤原基央", composer: "藤原基央", releaseDate: "2003-10", youtubeId: "", liveStandard: false, date: "2026-01-30",
-    bullets: ["どこにでも咲く花「たんぽぽ」を通して、ありのままの生き方を描く。"] },
-  { id: "glass-live", catNo: "No.018", title: "ガラスのブルース(Live ver.)", subtitle: "—", album: "ライブ盤", lyricist: "藤原基央", composer: "藤原基央", releaseDate: "2009-12", youtubeId: "", liveStandard: false, date: "2026-01-15",
-    bullets: ["スタジオ版とは違う、ライブならではのアレンジを楽しめる一曲。"] },
-  { id: "only-lonely-glory", catNo: "No.019", title: "オンリーロンリーグローリー", subtitle: "—", album: "シングル", lyricist: "藤原基央", composer: "藤原基央", releaseDate: "2011-09", youtubeId: "", liveStandard: false, date: "2025-12-20",
-    bullets: ["孤独(ロンリー)と栄光(グローリー)を対比させた、疾走感のある楽曲。"] },
-  { id: "umineko", catNo: "No.020", title: "ウミネコ", subtitle: "—", album: "シングル", lyricist: "藤原基央", composer: "藤原基央", releaseDate: "2013-02", youtubeId: "", liveStandard: false, date: "2025-12-05",
-    bullets: ["海猫(ウミネコ)を題材に、自由と孤独を同時に描く楽曲。"] },
-  { id: "shooting-star", catNo: "No.021", title: "なんでもないよ、流れ星", subtitle: "—", album: "PATHFINDER", lyricist: "藤原基央", composer: "藤原基央", releaseDate: "2022-11", youtubeId: "", liveStandard: false, date: "2025-11-22",
-    bullets: ["流れ星に願いを託すような、さりげなくも切ない楽曲。"] },
-  { id: "seaglass", catNo: "No.022", title: "シーグラス", subtitle: "—", album: "PATHFINDER", lyricist: "藤原基央", composer: "藤原基央", releaseDate: "2022-11", youtubeId: "", liveStandard: false, date: "2025-11-10",
-    bullets: ["波に削られたガラスの欠片(シーグラス)に、時間の積み重ねを見る楽曲。"] },
-  { id: "voyager", catNo: "No.023", title: "voyager", subtitle: "—", album: "シングル", lyricist: "藤原基央", composer: "藤原基央", releaseDate: "2016-07", youtubeId: "", liveStandard: false, date: "2025-10-28",
-    bullets: ["未知の旅(voyage)に出る者の心情を描いた楽曲。"] },
-  { id: "starlight", catNo: "No.024", title: "スターライト", subtitle: "—", album: "シングル", lyricist: "藤原基央", composer: "藤原基央", releaseDate: "2017-03", youtubeId: "", liveStandard: false, date: "2025-10-12",
-    bullets: ["星の光(スターライト)を道しるべに見立てた、静かな佳曲。"] },
-  { id: "orbit", catNo: "No.025", title: "軌道", subtitle: "—", album: "orbital period", lyricist: "藤原基央", composer: "藤原基央", releaseDate: "2007-03", youtubeId: "", liveStandard: false, date: "2025-09-30",
-    bullets: ["決まった軌道を巡る星のように、人と人の距離感を描いた楽曲。"] }
-];
+const MEMBERS_GROUP_PHOTO = "";
+
+/*
+  曲詳細ページの「◇〇〇の好きな歌詞」という見出しの〇〇部分に使う名前。
+  運営者の呼び名・ペンネームに書き換えてください。
+*/
+const OWNER_NAME = "大岩";
+
+/*
+  曲データについて
+  ----------------------------------------------------------------
+  以前はこのファイルに全曲分のデータを直接書いていましたが、
+  曲数が増えるたびにこの1ファイルを編集することになり、見通しが
+  悪くなるため、「曲1つ = 1ファイル」の構成に変更しました。
+
+  実際の曲データは js/songs/ フォルダの中に、1曲1ファイルで
+  入っています(例: js/songs/tentai-kansoku.js)。
+  各ファイルの中で SONGS.push({...}) という形で、この空配列に
+  曲を追加しています。
+
+  新しい曲を追加する手順は README.md の
+  「曲を1曲追加する手順」を参照してください。
+*/
+const SONGS = [];

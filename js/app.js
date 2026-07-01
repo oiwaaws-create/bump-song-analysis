@@ -139,12 +139,8 @@ function viewHome() {
       ${BAND_INTRO.split("\n").map(line => `<p>${line}</p>`).join("")}
     </div>
 
-    <div class="member-photo-row">
-      ${MEMBERS.map(m => `
-        <span class="member-photo-only" title="${m.name}">
-          ${m.photo ? `<img src="${m.photo}" alt="${m.name}">` : m.initial}
-        </span>
-      `).join("")}
+    <div class="feature-photo">
+      ${HOME_PHOTO ? `<img src="${HOME_PHOTO}" alt="BUMP OF CHICKEN">` : "PHOTO"}
     </div>
   `;
 }
@@ -154,28 +150,52 @@ function viewMembers() {
     <span class="section-eyebrow">MEMBERS</span>
     <h2 class="section-title">メンバー紹介</h2>
     <div class="intro-card">${BAND_INTRO.split("\n").slice(0, 2).map(l => `<p>${l}</p>`).join("")}</div>
+
+    <div class="feature-photo">
+      ${MEMBERS_GROUP_PHOTO ? `<img src="${MEMBERS_GROUP_PHOTO}" alt="メンバー集合写真">` : "PHOTO"}
+    </div>
+
     <div class="member-detail-grid">
       ${MEMBERS.map(m => `
         <div class="member-detail-card">
-          <span class="member-detail-photo">${m.photo ? `<img src="${m.photo}" alt="${m.name}">` : m.initial}</span>
-          <div>
-            <h3>${m.name}</h3>
-            <span class="role">${m.role}</span>
-            <p>${m.bio}</p>
-          </div>
+          <h3>${m.name}</h3>
+          <span class="role">${m.role}</span>
+          <p>${m.bio}</p>
         </div>
       `).join("")}
     </div>
+  `;
+}
 
-    <span class="section-eyebrow" style="margin-top:30px;display:block;">MEMBER EPISODE</span>
-    <h2 class="section-title" style="font-size:1.2rem;">メンバーの仲</h2>
-    <div class="episode-card">
-      <div class="episode-photo" aria-hidden="true">
-        ${MEMBER_EPISODE.photo ? `<img src="${MEMBER_EPISODE.photo}" alt="メンバーの集合写真">` : "PHOTO"}
-      </div>
-      <div class="episode-text">
-        ${MEMBER_EPISODE.message.split("\n").map(l => `<p>${l}</p>`).join("")}
-      </div>
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+/*
+  好きな歌詞のセットを1つ描画する。
+  item = { quotes: ["歌詞の一節", ...], comment: "解説文" }
+  quotes を複数入れると、1番とラスサビのような複数引用を1つの解説で並べられる。
+*/
+function renderLyricSet(item) {
+  const quotes = (item.quotes || []).map(q => `<blockquote class="lyric-quote">${escapeHtml(q)}</blockquote>`).join("");
+  const comment = item.comment ? `<p class="lyric-comment">${escapeHtml(item.comment)}</p>` : "";
+  return `<div class="lyric-set">${quotes}${comment}</div>`;
+}
+
+/*
+  好きな歌詞を「1番」「2番」「Cメロ+大サビ」のようなブロック単位でまとめて描画する。
+  block = { label: "1番", items: [ {quotes, comment}, {quotes, comment}, ... ] }
+  1ブロックの中に、quotes+comment のセットを何個でも並べられる。
+*/
+function renderLyricBlock(block) {
+  const items = (block.items || []).map(renderLyricSet).join("");
+  return `
+    <div class="lyric-block">
+      <p class="lyric-block-label">${escapeHtml(block.label || "")}</p>
+      ${items || `<p class="lyric-comment" style="opacity:0.6;">(このブロックはまだ未入力です)</p>`}
     </div>
   `;
 }
@@ -276,7 +296,7 @@ function viewSongDetail(id) {
   }
 
   const videoBlock = song.youtubeId
-    ? `<iframe src="https://www.youtube.com/embed/${song.youtubeId}" title="${song.title}" allowfullscreen loading="lazy"></iframe>`
+    ? `<iframe src="https://www.youtube.com/embed/${song.youtubeId}" title="${escapeHtml(song.title)}" allowfullscreen loading="lazy"></iframe>`
     : `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--mist-dim);font-family:var(--font-mono);font-size:0.78rem;text-align:center;padding:0 20px;">
          動画未設定 — data.js の youtubeId に動画IDを設定すると、ここにYouTube動画が表示されます
        </div>`;
@@ -284,6 +304,19 @@ function viewSongDetail(id) {
   const parentAlbum = findAlbumByTitle(song.album);
   const backHref = parentAlbum ? `#album-${parentAlbum.id}` : "#album";
   const backLabel = parentAlbum ? `‹ ${parentAlbum.title} に戻る` : "‹ 一覧に戻る";
+
+  const interpBlock = song.interpretation ? `
+    <span class="section-eyebrow" style="display:block;margin-top:8px;">◇ 解釈</span>
+    <div class="interp-box">
+      <span class="interp-note">${escapeHtml(song.interpretation.note || "")}</span>
+      <a href="${song.interpretation.url}" target="_blank" rel="noopener noreferrer">${escapeHtml(song.interpretation.label || "記事を読む")} ↗</a>
+    </div>
+  ` : "";
+
+  const lyricsBlock = (song.favoriteLyrics && song.favoriteLyrics.length) ? `
+    <span class="section-eyebrow" style="display:block;margin-top:28px;">◇ ${escapeHtml(OWNER_NAME)}の好きな歌詞</span>
+    ${song.favoriteLyrics.map(renderLyricBlock).join("")}
+  ` : "";
 
   return `
     <a class="back-link" href="${backHref}">${backLabel}</a>
@@ -305,6 +338,9 @@ function viewSongDetail(id) {
     <ul class="desc-list">
       ${(song.bullets || []).map(b => `<li>${b}</li>`).join("")}
     </ul>
+
+    ${interpBlock}
+    ${lyricsBlock}
   `;
 }
 
