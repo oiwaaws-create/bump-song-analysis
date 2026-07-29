@@ -436,11 +436,10 @@ function viewSongDetail(id) {
   const backHref = parentAlbum ? `#album-${parentAlbum.id}` : "#album";
   const backLabel = parentAlbum ? `‹ ${parentAlbum.title} に戻る` : "‹ 一覧に戻る";
 
-  const interpBlock = song.interpretation ? `
-    <span class="section-eyebrow" style="display:block;margin-top:8px;">◇ ほかの人の解釈</span>
-    <div class="interp-box">
-      <span class="interp-note">${escapeHtml(song.interpretation.note || "")}</span>
-      <a href="${song.interpretation.url}" target="_blank" rel="noopener noreferrer">${escapeHtml(song.interpretation.label || "記事を読む")} ↗</a>
+  const liveVideoBlock = song.liveVideoId ? `
+    <span class="section-eyebrow" style="display:block;margin-top:8px;">◇ ライブ音源</span>
+    <div class="video-frame">
+      <iframe src="https://www.youtube.com/embed/${escapeHtml(song.liveVideoId)}" title="${escapeHtml(song.title)}(Live)" allowfullscreen loading="lazy"></iframe>
     </div>
   ` : "";
 
@@ -470,7 +469,7 @@ function viewSongDetail(id) {
       ${(song.bullets || []).map(b => `<li>${b}</li>`).join("")}
     </ul>
 
-    ${interpBlock}
+    ${liveVideoBlock}
     ${lyricsBlock}
   `;
 }
