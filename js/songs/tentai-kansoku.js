@@ -7,7 +7,7 @@ SONGS.push({
   "album": "jupiter",
   "lyricist": "藤原基央",
   "composer": "藤原基央",
-  "releaseDate": "2001-11",
+  "releaseDate": "2001-03",
   "youtubeId": "",
   "liveStandard": true,
   "date": "2026-06-18",

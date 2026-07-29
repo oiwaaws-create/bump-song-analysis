@@ -1,13 +1,13 @@
-/* BUTTERFLY (No.014) */
+/* Butterfly (No.014) */
 SONGS.push({
   "id": "butterfly",
   "catNo": "No.014",
-  "title": "BUTTERFLY",
+  "title": "Butterfly",
   "subtitle": "—",
-  "album": "RAY",
+  "album": "Butterflies",
   "lyricist": "藤原基央",
   "composer": "藤原基央",
-  "releaseDate": "2014-01",
+  "releaseDate": "2016-02",
   "youtubeId": "",
   "liveStandard": false,
   "date": "2026-03-18",

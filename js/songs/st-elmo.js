@@ -1,13 +1,13 @@
-/* セントエルモの灯火 (No.012) */
+/* セントエルモの火 (No.012) */
 SONGS.push({
   "id": "st-elmo",
   "catNo": "No.012",
-  "title": "セントエルモの灯火",
+  "title": "セントエルモの火",
   "subtitle": "—",
-  "album": "シングル",
+  "album": "COSMONAUT",
   "lyricist": "藤原基央",
   "composer": "藤原基央",
-  "releaseDate": "2018-01",
+  "releaseDate": "2010-12",
   "youtubeId": "",
   "liveStandard": false,
   "date": "2026-04-10",

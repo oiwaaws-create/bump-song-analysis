@@ -6,20 +6,22 @@
    ============================================================ */
 
 :root {
-  /* --- Color: named tokens --- */
-  --void:      #0a0d1c;  /* 背景: 深い宇宙 */
-  --indigo:    #14182e;  /* パネル背景: 少し明るい紺 */
-  --indigo-2:  #1c2140;  /* カード背景: さらに明るい紺 */
-  --nebula:    #8b7bf2;  /* 主アクセント: 星雲のすみれ色 */
-  --nebula-dim:#5d51a8;
-  --comet:     #e8b954;  /* 副アクセント: 彗星の金色 */
-  --comet-dim: #a98538;
-  --mist:      #b9bfd6;  /* 本文: 淡い銀 */
-  --mist-dim:  #7d84a3;
-  --starwhite: #f4f1e6;  /* 見出し: 暖かい白 */
-  --line:      rgba(180, 190, 230, 0.14);
-  --glow-nebula: 0 0 24px rgba(139, 123, 242, 0.35);
-  --glow-comet:  0 0 18px rgba(232, 185, 84, 0.35);
+  /* --- Color: named tokens ---
+     案3「星図と粒子」ベース。恒星の瞬きに使うシアン1色を軸に、
+     暖色は使わず単色の濃淡だけで階調をつくる。 */
+  --void:      #05070c;  /* 背景: 深い宇宙 */
+  --indigo:    #0b121a;  /* パネル背景: 少し明るい紺 */
+  --indigo-2:  #101a24;  /* カード背景: さらに明るい紺 */
+  --nebula:    #6fd8ff;  /* 主アクセント: 恒星のシアン */
+  --nebula-dim:#2f6b7d;
+  --comet:     #a7ebff;  /* 副アクセント: 明るいシアン(白に近い) */
+  --comet-dim: #3f8ba3;
+  --mist:      #b7c6cc;  /* 本文: 淡い銀 */
+  --mist-dim:  #6f8891;
+  --starwhite: #e7f2f5;  /* 見出し: 冷たい白 */
+  --line:      rgba(167, 235, 255, 0.14);
+  --glow-nebula: 0 0 24px rgba(111, 216, 255, 0.35);
+  --glow-comet:  0 0 18px rgba(167, 235, 255, 0.35);
 
   /* --- Type --- */
   --font-display: "Shippori Mincho", "Noto Serif JP", serif;
@@ -46,57 +48,15 @@ body {
   overflow-x: hidden;
 }
 
-/* ---------- 背景: 星空 + 星雲のにじみ ---------- */
-.starfield {
+/* ---------- 背景: 実際の恒星配置に基づく星空(js/starfield.js) ---------- */
+.sky-canvas {
   position: fixed;
   inset: 0;
   z-index: -2;
+  width: 100vw;
+  height: 100vh;
   background: var(--void);
-}
-.starfield::before,
-.starfield::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-repeat: repeat;
-  background-image:
-    radial-gradient(1.5px 1.5px at 10% 20%, rgba(244,241,230,0.9) 50%, transparent 51%),
-    radial-gradient(1px 1px at 30% 70%, rgba(244,241,230,0.7) 50%, transparent 51%),
-    radial-gradient(1.5px 1.5px at 60% 15%, rgba(244,241,230,0.8) 50%, transparent 51%),
-    radial-gradient(1px 1px at 80% 50%, rgba(244,241,230,0.6) 50%, transparent 51%),
-    radial-gradient(1px 1px at 45% 85%, rgba(244,241,230,0.7) 50%, transparent 51%),
-    radial-gradient(1.5px 1.5px at 90% 80%, rgba(244,241,230,0.6) 50%, transparent 51%),
-    radial-gradient(1px 1px at 15% 45%, rgba(244,241,230,0.5) 50%, transparent 51%),
-    radial-gradient(1px 1px at 70% 35%, rgba(244,241,230,0.55) 50%, transparent 51%);
-  background-size: 380px 380px;
-  animation: twinkle 6s ease-in-out infinite alternate;
-}
-.starfield::after {
-  background-size: 520px 520px;
-  background-position: 60px 90px;
-  opacity: 0.5;
-  animation-duration: 9s;
-}
-@keyframes twinkle {
-  from { opacity: 0.55; }
-  to   { opacity: 1; }
-}
-.nebula-glow {
-  position: fixed;
-  z-index: -1;
-  width: 60vw;
-  height: 60vw;
-  max-width: 800px;
-  max-height: 800px;
-  top: -20%;
-  right: -15%;
-  background: radial-gradient(circle, rgba(139,123,242,0.18), transparent 70%);
-  filter: blur(10px);
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .starfield::before, .starfield::after { animation: none; }
+  display: block;
 }
 
 /* ---------- ヘッダー: タイトル + 軌道タブ ---------- */
@@ -116,12 +76,13 @@ body {
 .site-title {
   font-family: var(--font-display);
   color: var(--starwhite);
-  font-size: 1.5rem;
-  letter-spacing: 0.08em;
+  font-size: clamp(1.05rem, 4.2vw, 1.5rem);
+  letter-spacing: 0.06em;
   margin: 0;
   display: flex;
   align-items: baseline;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: 8px 10px;
 }
 .site-title small {
   font-family: var(--font-mono);
@@ -309,7 +270,7 @@ body {
 .section-title {
   font-family: var(--font-display);
   color: var(--starwhite);
-  font-size: 1.7rem;
+  font-size: clamp(1.3rem, 4.5vw, 1.7rem);
   margin: 0 0 18px;
   letter-spacing: 0.03em;
 }
@@ -547,6 +508,51 @@ body {
 }
 
 /* ---------- アルバムページ ---------- */
+.album-head-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.solar-toggle {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--starwhite);
+  background: var(--indigo-2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 9px 18px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+.solar-toggle:hover, .solar-toggle:focus-visible {
+  border-color: var(--nebula);
+  color: var(--nebula);
+  outline: none;
+}
+.solar-stage {
+  position: relative;
+  margin-top: 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: radial-gradient(circle at 50% 45%, rgba(111,216,255,0.06), transparent 70%);
+  height: 460px;
+  overflow: hidden;
+}
+.solar-stage canvas { width: 100%; height: 100%; display: block; }
+.solar-hint {
+  position: absolute;
+  bottom: 12px; left: 0; right: 0;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  color: var(--mist-dim);
+  pointer-events: none;
+}
 .album-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -571,15 +577,37 @@ body {
 .album-art {
   width: 100%;
   aspect-ratio: 1 / 1;
-  background: radial-gradient(circle at 30% 25%, var(--nebula) 0%, var(--indigo) 55%, var(--void) 100%);
+  background: linear-gradient(160deg, hsl(195, 65%, calc(9% + var(--i, 0) * 1.1%)), var(--void) 78%);
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 .album-art::after {
   content: "";
   position: absolute;
-  inset: 18%;
-  border: 1px solid rgba(244,241,230,0.25);
+  inset: 16%;
+  border: 1px solid rgba(231,242,245,0.20);
   border-radius: 50%;
+}
+.album-art::before {
+  content: "";
+  position: absolute;
+  inset: 30%;
+  border: 1px solid rgba(231,242,245,0.12);
+  border-radius: 50%;
+}
+.album-art img { width: 100%; height: 100%; object-fit: cover; position: relative; z-index: 1; }
+.album-art .jacket-title {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-display);
+  color: var(--starwhite);
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
+  text-align: center;
+  padding: 0 16px;
 }
 .album-body { padding: 16px 18px; }
 .album-body .a-year {
@@ -654,8 +682,9 @@ body {
 .song-detail-head h1 {
   font-family: var(--font-display);
   color: var(--starwhite);
-  font-size: 2rem;
+  font-size: clamp(1.4rem, 5.5vw, 2rem);
   margin: 6px 0 4px;
+  text-wrap: balance;
 }
 .song-detail-head .subtitle {
   color: var(--mist-dim);
@@ -752,47 +781,88 @@ body {
   color: var(--void);
 }
 
-/* ---------- 好きな歌詞: ブロック(1番/2番/Cメロ+大サビ等)単位のグループ ---------- */
-.lyric-block { margin-bottom: 38px; }
+/* ---------- 歌詞考察: ブロック(1番/2番/Cメロ+大サビ等)単位のグループ ---------- */
+.lyric-block { margin-bottom: 40px; }
 .lyric-block:last-child { margin-bottom: 0; }
 .lyric-block-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-family: var(--font-mono);
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   letter-spacing: 0.1em;
   color: var(--nebula);
-  margin: 0 0 16px;
-  padding-bottom: 8px;
-  border-bottom: 1px dashed var(--line);
+  margin: 0 0 14px;
+}
+.lyric-block-label::before {
+  content: "";
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--nebula);
+  box-shadow: 0 0 8px rgba(111,216,255,0.6);
+  flex: none;
 }
 
-/* ---------- 好きな歌詞(歌詞+解説を1セットとして表示) ---------- */
+/* ---------- 歌詞考察(星座カード: 背景の星空とつながる1枚として表示) ---------- */
 .lyric-set {
+  position: relative;
+  overflow: hidden;
   background: var(--indigo-2);
   border: 1px solid var(--line);
-  border-radius: var(--radius);
-  padding: 20px 22px;
-  margin-bottom: 46px;
+  border-radius: 8px;
+  padding: 22px 24px;
+  margin-bottom: 18px;
+}
+.lyric-set::before {
+  /* ごく薄い星座の点(装飾のみ・実データとは無関係の固定パターン) */
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.7;
+  pointer-events: none;
+  background-image:
+    radial-gradient(1px 1px at 8% 18%, rgba(111,216,255,0.55), transparent 60%),
+    radial-gradient(1px 1px at 22% 78%, rgba(111,216,255,0.4), transparent 60%),
+    radial-gradient(1px 1px at 46% 32%, rgba(111,216,255,0.45), transparent 60%),
+    radial-gradient(1px 1px at 63% 82%, rgba(111,216,255,0.35), transparent 60%),
+    radial-gradient(1px 1px at 82% 22%, rgba(111,216,255,0.5), transparent 60%),
+    radial-gradient(1px 1px at 92% 66%, rgba(111,216,255,0.3), transparent 60%);
 }
 .lyric-block .lyric-set:last-child { margin-bottom: 0; }
+.lyric-set-inner { position: relative; z-index: 1; }
 .lyric-quote {
   position: relative;
-  background: linear-gradient(135deg, rgba(232,185,84,0.22), rgba(139,123,242,0.16));
-  border: 1px solid var(--comet-dim);
-  border-radius: var(--radius);
-  padding: 16px 22px;
-  margin: 0 0 12px;
+  border-left: 2px solid var(--nebula-dim);
+  padding: 1px 0 1px 18px;
+  margin: 0 0 14px;
   font-family: var(--font-display);
   color: var(--starwhite);
-  font-size: 1rem;
+  font-size: 1.02rem;
   line-height: 1.9;
   white-space: pre-wrap;
 }
-.lyric-quote:last-of-type { margin-bottom: 16px; }
 .lyric-comment {
-  margin: 0;
+  margin: 0 0 14px;
+  padding-left: 18px;
   font-size: 0.9rem;
   color: var(--mist);
 }
+.lyric-image {
+  display: block;
+  max-width: calc(100% - 18px);
+  margin: 0 0 8px 18px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+.lyric-image-caption {
+  display: block;
+  margin: 0 0 14px 18px;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.03em;
+  color: var(--mist-dim);
+}
+.lyric-set-inner > *:last-child { margin-bottom: 0; }
 .back-link {
   display: inline-flex;
   align-items: center;
@@ -820,13 +890,34 @@ body {
 
 /* ---------- レスポンシブ ---------- */
 @media (max-width: 880px) {
-  .layout { grid-template-columns: 1fr; }
+  .layout { grid-template-columns: 1fr; padding: 24px 18px 0; gap: 24px; }
   .log-panel { position: static; }
   .member-detail-grid, .album-grid { grid-template-columns: 1fr; }
-  .song-grid { grid-template-columns: 1fr; }
+  .song-grid { grid-template-columns: repeat(2, 1fr); }
   .info-table { grid-template-columns: 1fr; }
   .header-inner { padding: 14px 16px 0; }
-  .orbit-nav { overflow-x: auto; }
+  .orbit-nav {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .orbit-nav::-webkit-scrollbar { display: none; }
+  .tab-btn { padding: 10px 14px 14px; font-size: 0.86rem; white-space: nowrap; }
+  .solar-stage { height: 360px; }
+  .album-head-row { align-items: flex-start; }
+}
+
+@media (max-width: 560px) {
+  .song-grid { grid-template-columns: 1fr; }
+  .intro-card, .lyric-set, .info-table { padding-left: 18px; padding-right: 18px; }
+  .video-frame { margin-left: -2px; margin-right: -2px; }
+  .catalog-section { padding-top: 20px; }
+  .search-wrap input { padding: 12px 16px 12px 40px; font-size: 0.86rem; }
+  .solar-stage { height: 300px; }
+  .solar-toggle { font-size: 0.68rem; padding: 8px 14px; }
+  .album-art .jacket-title { font-size: 0.92rem; }
+  .breadcrumbs { font-size: 0.62rem; }
+  .site-footer { padding: 32px 18px 48px; font-size: 0.68rem; }
 }
 
 [hidden] { display: none !important; }

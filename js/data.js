@@ -48,20 +48,20 @@ const ALBUMS = [
   {
     id: "flamevein",
     title: "FLAME VEIN",
-    year: "2001",
-    desc: "メジャーデビュー作。粗削りながら剥き出しの衝動が詰まった、初期バンプの原点となる一枚。"
+    year: "1999",
+    desc: "インディーズ時代のデビュー作。粗削りながら剥き出しの衝動が詰まった、初期バンプの原点となる一枚。"
+  },
+  {
+    id: "thelivingdead",
+    title: "THE LIVING DEAD",
+    year: "2000",
+    desc: "生と死、孤独といったテーマに正面から向き合った、重厚なロックサウンドが際立つインディーズ2作目。"
   },
   {
     id: "jupiter",
     title: "jupiter",
     year: "2002",
-    desc: "「天体観測」を収録した2ndアルバム。広い世代に名前が知れ渡るきっかけとなった作品。"
-  },
-  {
-    id: "thelivingdead",
-    title: "THE LIVING DEAD",
-    year: "2003",
-    desc: "生と死、孤独といったテーマに正面から向き合った、重厚なロックサウンドが際立つ作品。"
+    desc: "「天体観測」を収録したメジャー1stアルバム。広い世代に名前が知れ渡るきっかけとなった作品。"
   },
   {
     id: "yggdrasil",
@@ -78,14 +78,20 @@ const ALBUMS = [
   {
     id: "cosmonaut",
     title: "COSMONAUT",
-    year: "2009",
+    year: "2010",
     desc: "宇宙飛行士(コスモノート)をテーマに、旅と帰還のイメージが全体を貫くアルバム。"
   },
   {
     id: "ray",
     title: "RAY",
     year: "2014",
-    desc: "「ray」「BUTTERFLY」など、希望と再生をテーマにした楽曲が並ぶミドル期の代表作。"
+    desc: "「ray」など、希望と再生をテーマにした楽曲が並ぶミドル期の代表作。"
+  },
+  {
+    id: "butterflies",
+    title: "Butterflies",
+    year: "2016",
+    desc: "映画やアニメとのタイアップ曲を含む、変化と再生をテーマにした楽曲が並ぶアルバム。"
   },
   {
     id: "auroraarc",
@@ -94,10 +100,10 @@ const ALBUMS = [
     desc: "オーロラの弧(アーク)のように、過去と現在をつなぐ楽曲群で構成されたアルバム。"
   },
   {
-    id: "pathfinder",
-    title: "PATHFINDER",
-    year: "2022",
-    desc: "道を切り開く者(パスファインダー)をテーマにしたミニアルバム。短い収録時間の中に、これまでの歩みを振り返るような曲が並ぶ。"
+    id: "iris",
+    title: "Iris",
+    year: "2024",
+    desc: "aurora arcから5年ぶりとなる10作目のオリジナルアルバム。「アカシア」などを収録。"
   }
 ];
 
@@ -112,12 +118,6 @@ const HOME_PHOTO = "";
   例: const MEMBERS_GROUP_PHOTO = "images/members/group.jpg";
 */
 const MEMBERS_GROUP_PHOTO = "";
-
-/*
-  曲詳細ページの「◇〇〇の好きな歌詞」という見出しの〇〇部分に使う名前。
-  運営者の呼び名・ペンネームに書き換えてください。
-*/
-const OWNER_NAME = "大岩";
 
 /*
   曲データについて

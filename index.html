@@ -11,8 +11,7 @@
 </head>
 <body>
 
-<div class="starfield" aria-hidden="true"></div>
-<div class="nebula-glow" aria-hidden="true"></div>
+<canvas id="skyCanvas" class="sky-canvas" aria-hidden="true"></canvas>
 
 <!-- ====================== ヘッダー(タイトル + タブ) ====================== -->
 <header class="site-header">
@@ -72,6 +71,7 @@
 </footer>
 
 <script src="js/data.js"></script>
+<script src="js/published-songs.js"></script>
 
   <!-- 曲データ(1曲1ファイル)。新しい曲を追加するときは、ここに1行追加してください -->
   <script src="js/songs/tentai-kansoku.js"></script>
@@ -93,13 +93,119 @@
   <script src="js/songs/tampopo.js"></script>
   <script src="js/songs/glass-live.js"></script>
   <script src="js/songs/only-lonely-glory.js"></script>
-  <script src="js/songs/umineko.js"></script>
-  <script src="js/songs/shooting-star.js"></script>
-  <script src="js/songs/seaglass.js"></script>
   <script src="js/songs/voyager.js"></script>
-  <script src="js/songs/starlight.js"></script>
-  <script src="js/songs/orbit.js"></script>
 
+  <!-- ここから下: 2026-07-26 に追加した正規スタジオアルバム収録曲 -->
+  <script src="js/songs/kudaranai-uta.js"></script>
+  <script src="js/songs/arue.js"></script>
+  <script src="js/songs/little-braver.js"></script>
+  <script src="js/songs/no-hit-no-run.js"></script>
+  <script src="js/songs/totteoki-no-uta.js"></script>
+  <script src="js/songs/knife.js"></script>
+  <script src="js/songs/battle-cry.js"></script>
+  <script src="js/songs/opening-tld.js"></script>
+  <script src="js/songs/gungnir.js"></script>
+  <script src="js/songs/best-picture.js"></script>
+  <script src="js/songs/zoku-kudaranai-uta.js"></script>
+  <script src="js/songs/lamp.js"></script>
+  <script src="js/songs/lily.js"></script>
+  <script src="js/songs/ever-lasting-lie.js"></script>
+  <script src="js/songs/glorious-revolution.js"></script>
+  <script src="js/songs/ending-tld.js"></script>
+  <script src="js/songs/title-of-mine.js"></script>
+  <script src="js/songs/catch-ball.js"></script>
+  <script src="js/songs/harujion.js"></script>
+  <script src="js/songs/bench-to-coffee.js"></script>
+  <script src="js/songs/melody-flag.js"></script>
+  <script src="js/songs/bell.js"></script>
+  <script src="js/songs/diamond.js"></script>
+  <script src="js/songs/dandelion.js"></script>
+  <script src="js/songs/asgard.js"></script>
+  <script src="js/songs/joushaken.js"></script>
+  <script src="js/songs/guild.js"></script>
+  <script src="js/songs/embrace.js"></script>
+  <script src="js/songs/sailing-day.js"></script>
+  <script src="js/songs/onaji-door-wo-kugurettara.js"></script>
+  <script src="js/songs/sharin-no-uta.js"></script>
+  <script src="js/songs/snow-smile.js"></script>
+  <script src="js/songs/rem.js"></script>
+  <script src="js/songs/fire-sign.js"></script>
+  <script src="js/songs/taiyo.js"></script>
+  <script src="js/songs/midgard.js"></script>
+  <script src="js/songs/hoshi-no-tori.js"></script>
+  <script src="js/songs/sainojin-ouenka.js"></script>
+  <script src="js/songs/planetarium.js"></script>
+  <script src="js/songs/hammer-song-to-itami-no-tou.js"></script>
+  <script src="js/songs/jikuu-kakurenbo.js"></script>
+  <script src="js/songs/kasabuta-butabu.js"></script>
+  <script src="js/songs/hitorigoto.js"></script>
+  <script src="js/songs/ametama-no-uta.js"></script>
+  <script src="js/songs/hoshi-no-tori-reprise.js"></script>
+  <script src="js/songs/arrows.js"></script>
+  <script src="js/songs/namida-no-furusato.js"></script>
+  <script src="js/songs/flyby.js"></script>
+  <script src="js/songs/mitsuboshi-quartet.js"></script>
+  <script src="js/songs/rip.js"></script>
+  <script src="js/songs/weather-report.js"></script>
+  <script src="js/songs/funbetsu-funtouki.js"></script>
+  <script src="js/songs/motorcycle.js"></script>
+  <script src="js/songs/toumei-hikousen.js"></script>
+  <script src="js/songs/mahou-no-ryouri.js"></script>
+  <script src="js/songs/happy.js"></script>
+  <script src="js/songs/66-gousen.js"></script>
+  <script src="js/songs/angel-fall.js"></script>
+  <script src="js/songs/uchuu-hikoushi-eno-tegami.js"></script>
+  <script src="js/songs/innocent.js"></script>
+  <script src="js/songs/beautiful-glider.js"></script>
+  <script src="js/songs/will.js"></script>
+  <script src="js/songs/niji-wo-matsu-hito.js"></script>
+  <script src="js/songs/southern-cross.js"></script>
+  <script src="js/songs/last-one.js"></script>
+  <script src="js/songs/morning-glow.js"></script>
+  <script src="js/songs/zero.js"></script>
+  <script src="js/songs/torch.js"></script>
+  <script src="js/songs/smile.js"></script>
+  <script src="js/songs/firefly.js"></script>
+  <script src="js/songs/white-note.js"></script>
+  <script src="js/songs/tomodachi-no-uta.js"></script>
+  <script src="js/songs/please-forgive.js"></script>
+  <script src="js/songs/good-luck.js"></script>
+  <script src="js/songs/go.js"></script>
+  <script src="js/songs/ryuuseigun.js"></script>
+  <script src="js/songs/houseki-ni-natta-hi.js"></script>
+  <script src="js/songs/colony.js"></script>
+  <script src="js/songs/parade.js"></script>
+  <script src="js/songs/dai-gaman-taikai.js"></script>
+  <script src="js/songs/kodoku-no-gassho.js"></script>
+  <script src="js/songs/you-were-here.js"></script>
+  <script src="js/songs/aurora-arc-song.js"></script>
+  <script src="js/songs/gekkou.js"></script>
+  <script src="js/songs/aurora.js"></script>
+  <script src="js/songs/kinen-satsuei.js"></script>
+  <script src="js/songs/jungle-gym.js"></script>
+  <script src="js/songs/ribbon.js"></script>
+  <script src="js/songs/sirius.js"></script>
+  <script src="js/songs/aria.js"></script>
+  <script src="js/songs/hanashi-ga-shitaiyo.js"></script>
+  <script src="js/songs/bouen-no-march.js"></script>
+  <script src="js/songs/spica.js"></script>
+  <script src="js/songs/shinsekai.js"></script>
+  <script src="js/songs/nagareboshi-no-shoutai.js"></script>
+  <script src="js/songs/sleep-walking-orchestra.js"></script>
+  <script src="js/songs/nanairo.js"></script>
+  <script src="js/songs/gravity.js"></script>
+  <script src="js/songs/souvenir.js"></script>
+  <script src="js/songs/small-world.js"></script>
+  <script src="js/songs/chronostasis.js"></script>
+  <script src="js/songs/flare.js"></script>
+  <script src="js/songs/kaikou.js"></script>
+  <script src="js/songs/ao-no-tsuitachi.js"></script>
+  <script src="js/songs/strawberry.js"></script>
+  <script src="js/songs/mado-no-naka-kara.js"></script>
+  <script src="js/songs/komorebi-to-issho-ni.js"></script>
+
+<script src="js/star-data.js"></script>
+<script src="js/starfield.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
