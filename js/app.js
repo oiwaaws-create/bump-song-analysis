@@ -154,7 +154,7 @@ function viewMembers() {
     <span class="section-eyebrow">MEMBERS</span>
     <h2 class="section-title">メンバー紹介</h2>
 
-    <div class="feature-photo">
+    <div class="feature-photo members-photo">
       ${MEMBERS_GROUP_PHOTO ? `<img src="${MEMBERS_GROUP_PHOTO}" alt="メンバー集合写真">` : "PHOTO"}
     </div>
     ${MEMBERS_GROUP_PHOTO_CAPTION ? `<p class="photo-caption">${MEMBERS_GROUP_PHOTO_CAPTION}</p>` : ""}
