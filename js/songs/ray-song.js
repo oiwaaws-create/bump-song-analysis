@@ -88,7 +88,7 @@ SONGS.push({
           "comment": `苦痛から逃れるためには楽しくいたほうがいいよねって。でも切り替えているのは君の存在への裏切りのように見えてしまう。
           それに対し、消えないから大丈夫だよと言ってくれてるわけです。
           BUMPは無責任な励ましはしないので、大丈夫という言葉はBUMPを知れば知るほど勇気をもらう一言になります。`,
-          "image": "images/lyrics/acasia_motobe.jpg",
+          "image": "images/lyrics/ray_hiro.jpg",
           "imageCaption": "僕のヒーローアカデミア 42巻より引用",
           "commentAfter": "過去は消えない、それはいい意味でも悪い意味でも"
         }
