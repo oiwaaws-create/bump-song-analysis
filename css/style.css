@@ -308,6 +308,14 @@ body {
   width: 100%; height: 100%;
   object-fit: cover;
 }
+.photo-caption {
+  margin: -28px 0 36px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.03em;
+  color: var(--mist-dim);
+  text-align: center;
+}
 
 /* ---------- 検索バー ---------- */
 .catalog-section {
@@ -505,6 +513,7 @@ body {
   margin: 0;
   font-size: 0.86rem;
   color: var(--mist);
+  white-space: pre-line;
 }
 
 /* ---------- アルバムページ ---------- */

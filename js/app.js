@@ -153,11 +153,11 @@ function viewMembers() {
   return `
     <span class="section-eyebrow">MEMBERS</span>
     <h2 class="section-title">メンバー紹介</h2>
-    <div class="intro-card">${BAND_INTRO.split("\n").slice(0, 2).map(l => `<p>${l}</p>`).join("")}</div>
 
     <div class="feature-photo">
       ${MEMBERS_GROUP_PHOTO ? `<img src="${MEMBERS_GROUP_PHOTO}" alt="メンバー集合写真">` : "PHOTO"}
     </div>
+    ${MEMBERS_GROUP_PHOTO_CAPTION ? `<p class="photo-caption">${MEMBERS_GROUP_PHOTO_CAPTION}</p>` : ""}
 
     <div class="member-detail-grid">
       ${MEMBERS.map(m => `
