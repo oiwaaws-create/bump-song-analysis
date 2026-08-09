@@ -108,7 +108,7 @@ const ALBUMS = [
   ホームタブ: バンド説明の直下に表示する1枚の画像
   例: const HOME_PHOTO = "images/home-photo.jpg";
 */
-const HOME_PHOTO = "";
+const HOME_PHOTO = "images/artist.jpg";
 
 /*
   メンバータブ: 各メンバー紹介の上に表示する「4人の集合写真」(1枚のみ)
