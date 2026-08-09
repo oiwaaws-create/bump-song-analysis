@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>曲解説エディタ(ローカル編集ツール)</title>
+<style>
+  :root {
+    --void: #05070c;
+    --indigo: #0b121a;
+    --indigo-2: #101a24;
+    --nebula: #6fd8ff;
+    --comet: #a7ebff;
+    --mist: #b7c6cc;
+    --mist-dim: #6f8891;
+    --starwhite: #e7f2f5;
+    --line: rgba(167, 235, 255, 0.14);
+    --danger: #ff8a8a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 24px 32px 80px;
+    background: var(--void); color: var(--mist);
+    font-family: "Zen Kaku Gothic New", "Noto Sans JP", sans-serif;
+    line-height: 1.7;
+  }
+  h1 { color: var(--starwhite); font-size: 20px; margin-bottom: 4px; }
+  .sub { color: var(--mist-dim); font-size: 13px; margin-bottom: 24px; }
+  section {
+    background: var(--indigo); border: 1px solid var(--line); border-radius: 10px;
+    padding: 18px 20px; margin-bottom: 18px;
+  }
+  section > h2 { color: var(--comet); font-size: 15px; margin: 0 0 12px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+  .hint { color: var(--mist-dim); font-size: 12.5px; margin: -4px 0 12px; }
+  label { display: block; font-size: 12.5px; color: var(--mist-dim); margin: 10px 0 4px; }
+  input[type=text], input[type=date], textarea, select {
+    width: 100%; background: var(--indigo-2); border: 1px solid var(--line); border-radius: 6px;
+    color: var(--starwhite); padding: 8px 10px; font-family: inherit; font-size: 13.5px;
+  }
+  textarea { resize: vertical; min-height: 56px; font-family: "JetBrains Mono", Consolas, monospace; font-size: 12.5px; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0 16px; }
+  .grid > div { min-width: 0; }
+  .row-inline { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+  button {
+    background: var(--indigo-2); color: var(--comet); border: 1px solid var(--nebula);
+    border-radius: 6px; padding: 7px 14px; font-size: 13px; cursor: pointer; font-family: inherit;
+  }
+  button:hover { background: rgba(111,216,255,0.12); }
+  button.primary { background: var(--nebula); color: #04202b; font-weight: bold; }
+  button.danger { border-color: var(--danger); color: var(--danger); }
+  button.small { padding: 4px 10px; font-size: 12px; }
+  .block { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; margin-bottom: 14px; background: rgba(255,255,255,0.02); }
+  .block-head { display: flex; gap: 10px; align-items: center; }
+  .block-head input { flex: 1; }
+  .item { border-left: 3px solid var(--nebula); padding: 10px 0 10px 14px; margin: 12px 0; }
+  .item-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+  .imageFields { display: none; margin-top: 8px; padding: 8px; border: 1px dashed var(--line); border-radius: 6px; }
+  .imageFields.show { display: block; }
+  #output { min-height: 320px; font-size: 12px; }
+  .toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+  .status { font-size: 12.5px; margin-top: 8px; }
+  .status.ok { color: #8fe8a0; }
+  .status.err { color: var(--danger); }
+  .snippet { background: var(--indigo-2); border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; font-family: "JetBrains Mono", Consolas, monospace; font-size: 12px; color: var(--comet); white-space: pre-wrap; word-break: break-all; }
+</style>
+</head>
+<body>
+
+<h1>曲解説エディタ(ローカル編集ツール)</h1>
+<p class="sub">歌詞の引用とコメント(考察)以外の入力・書式作業を自動化するための、サイト本体とは独立したローカル専用ツールです。生成したコードは公開サイトのファイルにはまだ反映されません(手動で保存・pushするまでは非公開)。</p>
+
+<section>
+  <h2>① 既存ファイルを読み込む(下書き済みの曲を仕上げる場合)</h2>
+  <p class="hint"><code>js/songs/&lt;曲のid&gt;.js</code> の中身を丸ごとコピーして、下に貼り付けてください。新しく曲を1から作る場合はこの手順は不要です(②から入力してください)。</p>
+  <textarea id="pasteArea" placeholder="ここに既存の js/songs/xxx.js の中身を貼り付け"></textarea>
+  <div class="toolbar">
+    <button id="loadBtn" class="primary">フォームに読み込む</button>
+    <button id="clearBtn">フォームを空にする(新規作成)</button>
+  </div>
+  <div id="loadStatus" class="status"></div>
+</section>
+
+<section>
+  <h2>② 基本情報</h2>
+  <div class="grid">
+    <div><label>id(ファイル名と揃える。半角英数字・ハイフン)</label><input type="text" id="f_id"></div>
+    <div><label>カタログ番号 (catNo)</label><input type="text" id="f_catNo" placeholder="No.026"></div>
+    <div><label>曲名 (title)</label><input type="text" id="f_title"></div>
+    <div><label>サブタイトル (subtitle)</label><input type="text" id="f_subtitle" placeholder="—"></div>
+    <div><label>アルバム (album)</label><input type="text" id="f_album" list="albumList" placeholder="ALBUMS の title と完全一致させる"></div>
+    <div><label>作詞 (lyricist)</label><input type="text" id="f_lyricist" value="藤原基央"></div>
+    <div><label>作曲 (composer)</label><input type="text" id="f_composer" value="藤原基央"></div>
+    <div><label>リリース年月 (releaseDate)</label><input type="text" id="f_releaseDate" placeholder="2026-06"></div>
+    <div><label>YouTube動画ID (youtubeId)</label><input type="text" id="f_youtubeId" placeholder="11文字。空でもOK"></div>
+    <div><label>ライブ音源 動画ID (liveVideoId・任意)</label><input type="text" id="f_liveVideoId"></div>
+    <div>
+      <label>観測ログ表示日 (date)</label>
+      <div class="row-inline"><input type="text" id="f_date"><button type="button" class="small" id="todayBtn">今日にする</button></div>
+    </div>
+    <div>
+      <label>&nbsp;</label>
+      <label class="row-inline" style="margin:8px 0 0"><input type="checkbox" id="f_liveStandard" style="width:auto"> ライブ定番曲タブに表示する</label>
+    </div>
+  </div>
+  <datalist id="albumList"></datalist>
+</section>
+
+<section>
+  <h2>③ 概要(bullets)</h2>
+  <p class="hint">1行につき1項目。曲の背景・特徴・ライブでの様子などを箇条書きで。</p>
+  <textarea id="f_bullets" style="min-height:100px" placeholder="曲の背景や特徴をここに書く。&#10;ライブでの様子や聴きどころなど。"></textarea>
+</section>
+
+<section>
+  <h2>④ 外部の解釈記事(任意)</h2>
+  <label class="row-inline"><input type="checkbox" id="f_interpEnabled" style="width:auto"> 外部の解釈記事リンクを追加する</label>
+  <div class="grid" style="margin-top:10px">
+    <div><label>URL</label><input type="text" id="f_interpUrl"></div>
+    <div><label>表示ラベル</label><input type="text" id="f_interpLabel" placeholder="解釈記事(note)を読む"></div>
+  </div>
+</section>
+
+<section>
+  <h2>⑤ 歌詞考察(favoriteLyrics) — ここだけは手入力が必要な部分です</h2>
+  <p class="hint">「歌詞引用」には実際の歌詞をご自身で入力してください(著作権の関係でAIによる自動入力は行いません)。「コメント」はその引用への感想・解釈です。ブロックはA/Bメロ・サビなど曲の構成に合わせて自由に追加してください。</p>
+  <div id="blocksContainer"></div>
+  <button id="addBlockBtn">＋ ブロックを追加(例: 1番, サビ, ブリッジ...)</button>
+</section>
+
+<section>
+  <h2>⑥ コード生成</h2>
+  <div class="toolbar">
+    <button id="generateBtn" class="primary">コードを生成</button>
+    <button id="copyBtn">コピー</button>
+    <button id="saveFileBtn" style="display:none">ファイルに直接保存</button>
+  </div>
+  <div id="genStatus" class="status"></div>
+  <label style="margin-top:14px">生成結果 — <code>js/songs/&lt;id&gt;.js</code> の中身としてそのまま保存してください</label>
+  <textarea id="output" readonly></textarea>
+
+  <label style="margin-top:14px">新規の曲を追加した場合のみ: <code>index.html</code> に追記する1行</label>
+  <div class="snippet" id="scriptTagSnippet"></div>
+
+  <label style="margin-top:14px">この曲を公開する場合: <code>js/published-songs.js</code> の <code>PUBLISHED_SONG_IDS</code> に追加する行</label>
+  <div class="snippet" id="publishSnippet"></div>
+</section>
+
+<script src="../js/data.js"></script>
+<script>
+(function () {
+  // ---- album datalist ----
+  const albumList = document.getElementById('albumList');
+  (typeof ALBUMS !== 'undefined' ? ALBUMS : []).forEach(a => {
+    const opt = document.createElement('option');
+    opt.value = a.title;
+    albumList.appendChild(opt);
+  });
+
+  const val = id => document.getElementById(id).value;
+  const setVal = (id, v) => { document.getElementById(id).value = v == null ? '' : v; };
+
+  function todayStr() {
+    const d = new Date(), p = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+  }
+  setVal('f_date', todayStr());
+  document.getElementById('todayBtn').onclick = () => setVal('f_date', todayStr());
+
+  // ================= favoriteLyrics block/item builder (DOM-driven state) =================
+  const blocksContainer = document.getElementById('blocksContainer');
+
+  function makeItemEl(item) {
+    item = item || {};
+    const el = document.createElement('div');
+    el.className = 'item';
+    el.innerHTML = `
+      <label>歌詞引用(実際の歌詞をご自身で入力)</label>
+      <textarea class="quote" placeholder="実際の歌詞をここに入力(複数行OK)"></textarea>
+      <label>コメント(考察)</label>
+      <textarea class="comment" placeholder="この引用への解釈・感想"></textarea>
+      <label class="row-inline" style="margin-top:8px"><input type="checkbox" class="hasImage" style="width:auto"> 画像を添付する</label>
+      <div class="imageFields">
+        <label>画像パス</label><input type="text" class="imagePath" placeholder="images/lyrics/xxx.jpg">
+        <label>画像キャプション(任意)</label><input type="text" class="imageCaption">
+        <label>画像の後に続けるコメント(任意)</label><textarea class="commentAfter"></textarea>
+      </div>
+      <div class="item-actions">
+        <span></span>
+        <button type="button" class="danger small removeItemBtn">✕ この引用を削除</button>
+      </div>
+    `;
+    el.querySelector('.quote').value = (item.quotes && item.quotes[0]) || '';
+    el.querySelector('.comment').value = item.comment || '';
+    const hasImg = !!item.image;
+    el.querySelector('.hasImage').checked = hasImg;
+    el.querySelector('.imageFields').classList.toggle('show', hasImg);
+    el.querySelector('.imagePath').value = item.image || '';
+    el.querySelector('.imageCaption').value = item.imageCaption || '';
+    el.querySelector('.commentAfter').value = item.commentAfter || '';
+
+    el.querySelector('.hasImage').addEventListener('change', e => {
+      el.querySelector('.imageFields').classList.toggle('show', e.target.checked);
+    });
+    el.querySelector('.removeItemBtn').addEventListener('click', () => el.remove());
+    return el;
+  }
+
+  function makeBlockEl(block) {
+    block = block || { label: '', items: [{}] };
+    const el = document.createElement('div');
+    el.className = 'block';
+    el.innerHTML = `
+      <div class="block-head">
+        <input type="text" class="block-label" placeholder="例: 1番 Aメロ / サビ / ブリッジ / 大サビ">
+        <button type="button" class="danger small removeBlockBtn">✕ ブロック削除</button>
+      </div>
+      <div class="items"></div>
+      <button type="button" class="small addItemBtn">＋ 引用を追加</button>
+    `;
+    el.querySelector('.block-label').value = block.label || '';
+    const itemsEl = el.querySelector('.items');
+    (block.items && block.items.length ? block.items : [{}]).forEach(it => itemsEl.appendChild(makeItemEl(it)));
+
+    el.querySelector('.removeBlockBtn').addEventListener('click', () => el.remove());
+    el.querySelector('.addItemBtn').addEventListener('click', () => itemsEl.appendChild(makeItemEl({})));
+    return el;
+  }
+
+  document.getElementById('addBlockBtn').addEventListener('click', () => {
+    blocksContainer.appendChild(makeBlockEl({}));
+  });
+
+  function renderBlocks(favoriteLyrics) {
+    blocksContainer.innerHTML = '';
+    (favoriteLyrics || []).forEach(b => blocksContainer.appendChild(makeBlockEl(b)));
+    if (!favoriteLyrics || !favoriteLyrics.length) {
+      blocksContainer.appendChild(makeBlockEl({}));
+    }
+  }
+  renderBlocks(null); // start with one empty block
+
+  function readBlocksFromDom() {
+    return Array.from(blocksContainer.children).map(blockEl => {
+      const label = blockEl.querySelector('.block-label').value.trim();
+      const items = Array.from(blockEl.querySelectorAll('.item')).map(itemEl => {
+        const quote = itemEl.querySelector('.quote').value;
+        const comment = itemEl.querySelector('.comment').value;
+        const hasImage = itemEl.querySelector('.hasImage').checked;
+        const obj = { quotes: [quote], comment };
+        if (hasImage) {
+          const imagePath = itemEl.querySelector('.imagePath').value.trim();
+          const imageCaption = itemEl.querySelector('.imageCaption').value.trim();
+          const commentAfter = itemEl.querySelector('.commentAfter').value.trim();
+          if (imagePath) obj.image = imagePath;
+          if (imageCaption) obj.imageCaption = imageCaption;
+          if (commentAfter) obj.commentAfter = commentAfter;
+        }
+        return obj;
+      }).filter(it => it.quotes[0].trim() || it.comment.trim());
+      return { label, items };
+    }).filter(b => b.label.trim() || b.items.length);
+  }
+
+  // ================= load existing file content =================
+  document.getElementById('loadBtn').addEventListener('click', () => {
+    const text = document.getElementById('pasteArea').value;
+    const statusEl = document.getElementById('loadStatus');
+    if (!text.trim()) { statusEl.className = 'status err'; statusEl.textContent = '貼り付け欄が空です。'; return; }
+    let captured = null;
+    try {
+      const SONGS = { push(o) { captured = o; } };
+      new Function('SONGS', text)(SONGS);
+    } catch (e) {
+      statusEl.className = 'status err';
+      statusEl.textContent = '読み込みに失敗しました。ファイルの中身をそのまま貼り付けているか確認してください。 (' + e.message + ')';
+      return;
+    }
+    if (!captured) {
+      statusEl.className = 'status err';
+      statusEl.textContent = 'SONGS.push({...}) が見つかりませんでした。';
+      return;
+    }
+    setVal('f_id', captured.id);
+    setVal('f_catNo', captured.catNo);
+    setVal('f_title', captured.title);
+    setVal('f_subtitle', captured.subtitle);
+    setVal('f_album', captured.album);
+    setVal('f_lyricist', captured.lyricist);
+    setVal('f_composer', captured.composer);
+    setVal('f_releaseDate', captured.releaseDate);
+    setVal('f_youtubeId', captured.youtubeId);
+    setVal('f_liveVideoId', captured.liveVideoId);
+    document.getElementById('f_liveStandard').checked = !!captured.liveStandard;
+    setVal('f_date', captured.date || todayStr());
+    setVal('f_bullets', (captured.bullets || []).join('\n'));
+    const interp = captured.interpretation;
+    document.getElementById('f_interpEnabled').checked = !!interp;
+    setVal('f_interpUrl', interp ? interp.url : '');
+    setVal('f_interpLabel', interp ? interp.label : '解釈記事を読む');
+    renderBlocks(captured.favoriteLyrics);
+    statusEl.className = 'status ok';
+    statusEl.textContent = `読み込み完了: 「${captured.title}」。下のフォームに反映しました。`;
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    ['f_id','f_catNo','f_title','f_album','f_releaseDate','f_youtubeId','f_liveVideoId','f_interpUrl'].forEach(id => setVal(id, ''));
+    setVal('f_subtitle', '—');
+    setVal('f_lyricist', '藤原基央');
+    setVal('f_composer', '藤原基央');
+    setVal('f_date', todayStr());
+    setVal('f_bullets', '');
+    setVal('f_interpLabel', '解釈記事を読む');
+    document.getElementById('f_liveStandard').checked = false;
+    document.getElementById('f_interpEnabled').checked = false;
+    document.getElementById('pasteArea').value = '';
+    document.getElementById('loadStatus').textContent = '';
+    renderBlocks(null);
+  });
+
+  // ================= serializer =================
+  function strLit(s) {
+    s = s == null ? '' : String(s);
+    if (/\n/.test(s)) {
+      const escaped = s.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$\{/g, '\\${');
+      return '`' + escaped + '`';
+    }
+    return JSON.stringify(s);
+  }
+
+  function indent(text, spaces) {
+    const pad = ' '.repeat(spaces);
+    return text.split('\n').map(l => pad + l).join('\n');
+  }
+
+  function generate() {
+    const id = val('f_id').trim();
+    const catNo = val('f_catNo').trim();
+    const title = val('f_title').trim();
+    const bullets = val('f_bullets').split('\n').map(s => s.trim()).filter(Boolean);
+    const blocks = readBlocksFromDom();
+
+    if (!id || !title) {
+      document.getElementById('genStatus').className = 'status err';
+      document.getElementById('genStatus').textContent = 'id と 曲名(title) は必須です。';
+      return;
+    }
+
+    const lines = [];
+    lines.push(`/* ${title}${catNo ? ' (' + catNo + ')' : ''} */`);
+    lines.push('SONGS.push({');
+    lines.push(`  "id": ${strLit(id)},`);
+    lines.push(`  "catNo": ${strLit(catNo)},`);
+    lines.push(`  "title": ${strLit(title)},`);
+    lines.push(`  "subtitle": ${strLit(val('f_subtitle').trim() || '—')},`);
+    lines.push(`  "album": ${strLit(val('f_album').trim())},`);
+    lines.push(`  "lyricist": ${strLit(val('f_lyricist').trim())},`);
+    lines.push(`  "composer": ${strLit(val('f_composer').trim())},`);
+    lines.push(`  "releaseDate": ${strLit(val('f_releaseDate').trim())},`);
+    lines.push(`  "youtubeId": ${strLit(val('f_youtubeId').trim())},`);
+    if (val('f_liveVideoId').trim()) lines.push(`  "liveVideoId": ${strLit(val('f_liveVideoId').trim())},`);
+    lines.push(`  "liveStandard": ${document.getElementById('f_liveStandard').checked},`);
+    lines.push(`  "date": ${strLit(val('f_date').trim() || todayStr())},`);
+
+    const hasMoreAfterBullets = document.getElementById('f_interpEnabled').checked || blocks.length;
+    if (bullets.length) {
+      lines.push(`  "bullets": [`);
+      lines.push(bullets.map(b => '    ' + strLit(b)).join(',\n'));
+      lines.push(`  ]${hasMoreAfterBullets ? ',' : ''}`);
+    } else {
+      lines.push(`  "bullets": []${hasMoreAfterBullets ? ',' : ''}`);
+    }
+
+    if (document.getElementById('f_interpEnabled').checked) {
+      const url = val('f_interpUrl').trim();
+      const label = val('f_interpLabel').trim() || '解釈記事を読む';
+      lines.push(`  "interpretation": { "url": ${strLit(url)}, "label": ${strLit(label)} }${blocks.length ? ',' : ''}`);
+    }
+
+    if (blocks.length) {
+      lines.push(`  "favoriteLyrics": [`);
+      const blockChunks = blocks.map(b => {
+        const itemChunks = b.items.map(it => {
+          const parts = [];
+          parts.push(`      "quotes": [`);
+          parts.push(`        ${strLit(it.quotes[0])}`);
+          parts.push(`      ],`);
+          parts.push(`      "comment": ${strLit(it.comment)}${it.image ? ',' : ''}`);
+          if (it.image) {
+            parts.push(`      "image": ${strLit(it.image)}${it.imageCaption || it.commentAfter ? ',' : ''}`);
+            if (it.imageCaption) parts.push(`      "imageCaption": ${strLit(it.imageCaption)}${it.commentAfter ? ',' : ''}`);
+            if (it.commentAfter) parts.push(`      "commentAfter": ${strLit(it.commentAfter)}`);
+          }
+          return '    {\n' + parts.join('\n') + '\n    }';
+        });
+        return `    {\n      "label": ${strLit(b.label)},\n      "items": [\n${itemChunks.join(',\n')}\n      ]\n    }`;
+      });
+      lines.push(blockChunks.join(',\n'));
+      lines.push(`  ]`);
+    }
+
+    lines.push('});');
+    lines.push('');
+
+    return { text: lines.join('\n'), id };
+  }
+
+  document.getElementById('generateBtn').addEventListener('click', () => {
+    const result = generate();
+    if (!result) return;
+    document.getElementById('output').value = result.text;
+    document.getElementById('scriptTagSnippet').textContent = `<script src="js/songs/${result.id}.js"></scr` + `ipt>`;
+    document.getElementById('publishSnippet').textContent = `"${result.id}",`;
+    const statusEl = document.getElementById('genStatus');
+    statusEl.className = 'status ok';
+    statusEl.textContent = 'コードを生成しました。下の内容を js/songs/' + result.id + '.js として保存してください。';
+  });
+
+  document.getElementById('copyBtn').addEventListener('click', async () => {
+    const out = document.getElementById('output');
+    if (!out.value) return;
+    try {
+      await navigator.clipboard.writeText(out.value);
+    } catch (e) {
+      out.select();
+      document.execCommand('copy');
+    }
+    const statusEl = document.getElementById('genStatus');
+    statusEl.className = 'status ok';
+    statusEl.textContent = 'コピーしました。';
+  });
+
+  // optional direct-save (Chrome/Edge only, feature-detected)
+  if (window.showSaveFilePicker) {
+    const btn = document.getElementById('saveFileBtn');
+    btn.style.display = '';
+    btn.addEventListener('click', async () => {
+      const out = document.getElementById('output').value;
+      if (!out) return;
+      try {
+        const idGuess = (val('f_id').trim() || 'song') + '.js';
+        const handle = await window.showSaveFilePicker({
+          suggestedName: idGuess,
+          types: [{ description: 'JavaScript', accept: { 'text/javascript': ['.js'] } }]
+        });
+        const writable = await handle.createWritable();
+        await writable.write(out);
+        await writable.close();
+        const statusEl = document.getElementById('genStatus');
+        statusEl.className = 'status ok';
+        statusEl.textContent = 'ファイルに保存しました。';
+      } catch (e) {
+        if (e.name !== 'AbortError') alert('保存に失敗しました: ' + e.message);
+      }
+    });
+  }
+})();
+</script>
+</body>
+</html>
