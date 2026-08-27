@@ -8,7 +8,7 @@ SONGS.push({
   "lyricist": "藤原基央",
   "composer": "藤原基央",
   "releaseDate": "2000-03",
-  "youtubeId": "qDB8vBZNfA",
+  "youtubeId": "-qDB8vBZNfA",
   "liveStandard": true,
   "date": "2026-06-15",
   "bullets": [
