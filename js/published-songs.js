@@ -17,5 +17,6 @@ const PUBLISHED_SONG_IDS = [
   "acacia",
   "ray-song",
   "k",
-  "i"
+  "i",
+  "supernova"
 ];
