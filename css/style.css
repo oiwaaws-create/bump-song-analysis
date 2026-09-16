@@ -759,6 +759,26 @@ body {
   font-size: 0.8rem;
 }
 
+.interpretation-link {
+  margin: -14px 0 30px;
+}
+.interpretation-link a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--comet);
+  text-decoration: none;
+  border-bottom: 1px solid var(--comet-dim);
+  padding-bottom: 1px;
+  transition: color 0.15s, border-color 0.15s;
+}
+.interpretation-link a:hover {
+  color: var(--nebula);
+  border-color: var(--nebula);
+}
+
 /* ---------- 歌詞考察: ブロック(1番/2番/Cメロ+大サビ等)単位のグループ ---------- */
 .lyric-block { margin-bottom: 40px; }
 .lyric-block:last-child { margin-bottom: 0; }

@@ -436,6 +436,14 @@ function viewSongDetail(id) {
   const backHref = parentAlbum ? `#album-${parentAlbum.id}` : "#album";
   const backLabel = parentAlbum ? `‹ ${parentAlbum.title} に戻る` : "‹ 一覧に戻る";
 
+  const interpretationBlock = song.interpretation ? `
+    <p class="interpretation-link">
+      <a href="${escapeHtml(song.interpretation.url)}" target="_blank" rel="noopener noreferrer">
+        ↗ ${escapeHtml(song.interpretation.label || "解釈記事を読む")}
+      </a>
+    </p>
+  ` : "";
+
   const liveVideoBlock = song.liveVideoId ? `
     <span class="section-eyebrow" style="display:block;margin-top:8px;">◇ ライブ音源</span>
     <div class="video-frame">
@@ -468,6 +476,7 @@ function viewSongDetail(id) {
     <ul class="desc-list">
       ${(song.bullets || []).map(b => `<li>${b}</li>`).join("")}
     </ul>
+    ${interpretationBlock}
 
     ${liveVideoBlock}
     ${lyricsBlock}
