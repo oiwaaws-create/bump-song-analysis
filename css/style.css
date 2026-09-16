@@ -824,6 +824,7 @@ body {
   padding-left: 18px;
   font-size: 0.9rem;
   color: var(--mist);
+  white-space: pre-wrap;
 }
 .lyric-image {
   display: block;
