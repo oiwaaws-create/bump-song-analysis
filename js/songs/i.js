@@ -22,7 +22,8 @@ SONGS.push({
   /* 外部の解釈記事(任意。あれば追加。不要なら削除してOK) */
   "interpretation": {
     "url": "https://natalie.mu/music/pp/bumpofchicken24/page/3",
-    "label": "ヒロアカ愛に溢れたインタビューなので、暇だったら見て"
+    "label": "解釈記事を読む",
+    "comment": "ヒロアカ愛に溢れたインタビューなので、暇だったら見て"
   },
 
   /*

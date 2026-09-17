@@ -441,6 +441,7 @@ function viewSongDetail(id) {
       <a href="${escapeHtml(song.interpretation.url)}" target="_blank" rel="noopener noreferrer">
         ↗ ${escapeHtml(song.interpretation.label || "解釈記事を読む")}
       </a>
+      ${song.interpretation.comment ? `<span class="interpretation-comment">${escapeHtml(song.interpretation.comment)}</span>` : ""}
     </p>
   ` : "";
 
