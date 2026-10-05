@@ -19,5 +19,6 @@ const PUBLISHED_SONG_IDS = [
   "k",
   "i",
   "supernova",
-  "flare"
+  "flare",
+  "aurora"
 ];
