@@ -8,7 +8,7 @@ SONGS.push({
   "lyricist": "藤原基央",
   "composer": "藤原基央",
   "releaseDate": "2019-07",
-  "youtubeId": "",
+  "youtubeId": "M2bQzkg8R8A",
   "liveStandard": true,
   "date": "2026-10-05",
   "bullets": [

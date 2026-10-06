@@ -8,7 +8,7 @@ SONGS.push({
   "lyricist": "藤原基央",
   "composer": "藤原基央",
   "releaseDate": "2002-02",
-  "youtubeId": "",
+  "youtubeId": "isUT_ONplmo",
   "liveStandard": false,
   "date": "2026-10-07",
   "bullets": [

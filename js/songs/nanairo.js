@@ -7,8 +7,7 @@ SONGS.push({
   "album": "Iris",
   "lyricist": "藤原基央",
   "composer": "藤原基央",
-  "releaseDate": "2024-09",
-  "youtubeId": "",
+  "youtubeId": "ZvFs03X944E",
   "liveStandard": false,
   "date": "2026-10-06",
   "bullets": [
