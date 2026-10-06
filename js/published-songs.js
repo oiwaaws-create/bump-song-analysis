@@ -22,5 +22,6 @@ const PUBLISHED_SONG_IDS = [
   "flare",
   "aurora",
   "nanairo",
-  "66-gousen"
+  "66-gousen",
+  "diamond"
 ];
