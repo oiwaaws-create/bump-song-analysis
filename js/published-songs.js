@@ -23,5 +23,13 @@ const PUBLISHED_SONG_IDS = [
   "aurora",
   "nanairo",
   "66-gousen",
-  "diamond"
+  "diamond",
+  "shinsekai",
+  "stage-of-the-ground",
+  "diamant",
+  "totteoki-no-uta",
+  "innocent",
+  "ribbon",
+  "gungnir",
+  "sleep-walking-orchestra"
 ];
