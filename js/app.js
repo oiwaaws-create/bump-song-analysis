@@ -24,7 +24,7 @@ const navIndicator = document.getElementById("navIndicator");
 const tabButtons = [...tabNav.querySelectorAll(".tab-btn")];
 const breadcrumbsEl = document.getElementById("breadcrumbs");
 
-const TAB_LABELS = { home: "ホーム", members: "メンバー", album: "アルバム", live: "ライブ定番曲" };
+const TAB_LABELS = { home: "ホーム", members: "メンバー", album: "アルバム", live: "ライブ定番曲", ratioclavis: "Ratio Clavis" };
 
 function renderBreadcrumbs(trail) {
   // trail: 配列 [{label, href}] 最後の要素は現在地(リンクなし)
@@ -491,7 +491,8 @@ const ROUTE_RENDERERS = {
   home: viewHome,
   members: viewMembers,
   album: viewAlbum,
-  live: viewLive
+  live: viewLive,
+  ratioclavis: viewRatioClavis
 };
 
 function updateIndicator(routeKey) {

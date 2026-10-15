@@ -929,3 +929,89 @@ body {
 }
 
 [hidden] { display: none !important; }
+
+/* ---------- Ratio Clavis(ツアー)タブ ----------
+   サイト共通のシアン1色の濃淡のまま、声出し/クラップ/拳は
+   「塗り・線・点線」の形の違いで見分けられるようにしている */
+.rc-title { font-size: clamp(1.8rem, 7vw, 2.6rem); letter-spacing: 0.06em; text-shadow: var(--glow-nebula); }
+.rc-intro { display: flex; flex-direction: column; gap: 12px; }
+.rc-intro p { margin: 0; }
+.rc-trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 6px; }
+.rc-trio > div {
+  background: var(--indigo-2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.rc-trio-tag { font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.14em; color: var(--comet); }
+.rc-trio b { font-family: var(--font-display); color: var(--starwhite); font-size: 1.05rem; }
+.rc-trio span:last-child { font-size: 0.8rem; color: var(--mist-dim); line-height: 1.6; }
+.rc-free {
+  border-left: 2px solid var(--nebula-dim);
+  padding: 2px 0 2px 18px;
+  margin: 0 0 8px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+.rc-free p { margin: 0; }
+.rc-free-lead { font-family: var(--font-display); color: var(--starwhite); font-size: 1.1rem; }
+.rc-gap { margin-top: 40px; }
+.rc-note { color: var(--mist-dim); font-size: 0.86rem; margin: -6px 0 16px; }
+
+.rc-legend, .rc-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.rc-tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.6;
+  padding: 1px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+  border: 1px solid var(--comet-dim);
+  color: var(--comet);
+}
+.rc-tag.rc-voice { background: var(--nebula); border-color: var(--nebula); color: var(--void); }
+.rc-tag.rc-clap { background: transparent; border-color: var(--nebula); color: var(--nebula); }
+.rc-tag.rc-fist { background: rgba(111, 216, 255, 0.16); border-color: transparent; color: var(--comet); }
+.rc-tag.rc-sit { border-style: dashed; color: var(--mist); border-color: var(--mist-dim); }
+.rc-tag.rc-new { color: var(--starwhite); border-color: var(--starwhite); }
+.rc-tag.rc-guess { border-style: dashed; border-color: var(--mist-dim); color: var(--mist-dim); font-weight: 500; }
+
+.rc-setlist { margin-top: 16px; }
+.rc-setlist .ttl { min-width: 0; overflow-wrap: anywhere; }
+.rc-marks { display: flex; gap: 5px; flex: none; }
+.rc-mark { width: 9px; height: 9px; border-radius: 50%; box-sizing: border-box; }
+.rc-mark.rc-voice { background: var(--nebula); }
+.rc-mark.rc-clap { border: 2px solid var(--nebula); }
+.rc-mark.rc-fist { background: rgba(111, 216, 255, 0.35); }
+.rc-mark.rc-sit { border: 2px dashed var(--mist-dim); }
+
+.rc-songs { display: flex; flex-direction: column; gap: 12px; }
+.rc-song {
+  background: var(--indigo-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  display: flex; flex-direction: column; gap: 10px;
+  scroll-margin-top: calc(var(--header-h) + 16px);
+}
+.rc-song.rc-quiet { background: transparent; border-style: dashed; padding-block: 12px; }
+.rc-song.rc-quiet .rc-note { margin: 0; }
+.rc-song-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 12px; }
+.rc-song-head .rank { font-family: var(--font-mono); color: var(--comet); font-size: 0.78rem; }
+.rc-song-head h4 { margin: 0; font-family: var(--font-display); color: var(--starwhite); font-size: 1.1rem; }
+.rc-more { margin-left: auto; font-size: 0.78rem; color: var(--comet); text-decoration: none; }
+.rc-more:hover, .rc-more:focus-visible { text-decoration: underline; }
+.rc-cues { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.rc-cues li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 10px; align-items: start; }
+.rc-cues p { margin: 0; font-size: 0.92rem; line-height: 1.8; }
+.rc-lyric {
+  quotes: "「" "」";
+  font-family: var(--font-display);
+  color: var(--starwhite);
+}
+
+@media (max-width: 560px) {
+  .rc-trio { grid-template-columns: 1fr; }
+  .rc-cues li { grid-template-columns: 1fr; gap: 4px; }
+}
